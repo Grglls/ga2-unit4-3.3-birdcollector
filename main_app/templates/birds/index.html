@@ -5,7 +5,7 @@
 
   {% for bird in birds %}
   <div class="card">
-    <a href="/birds/{{ bird.id }}">
+    <a href="{% url 'detail' bird.id %}">
       <div class="card-content">
         <span class="card-title">{{ bird.name }}</span>
         <p>Species: {{ bird.species }}</p>

@@ -1,11 +1,6 @@
 from django.shortcuts import render
 
-# Temporary data:
-birds = [
-  {'name': 'Lolo', 'breed': 'Moa', 'description': 'Big scary bird!', 'age': 5},
-  {'name': 'Sachi', 'breed': 'Kiwi', 'description': 'Gentle and loving.', 'age': 2},
-  {'name': 'Bob', 'breed': 'Sparrow', 'description': 'Tinee-tiny bird.', 'age': 0},
-]
+from .models import Bird
 
 # Create your views here.
 def home(request):
@@ -17,4 +12,5 @@ def about(request):
 
 
 def birds_index(request):
+    birds = Bird.objects.all()
     return render(request, 'birds/index.html', { 'birds': birds })

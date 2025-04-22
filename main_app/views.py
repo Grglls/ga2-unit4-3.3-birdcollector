@@ -21,8 +21,16 @@ def birds_index(request):
 
 def birds_detail(request, bird_id):
     bird = Bird.objects.get(id=bird_id)
+    # Get the id's of the toys that are already associated with the bird:
+    id_list = bird.toys.all().values_list('id')
+    # Get the toys that are not associated with the bird:
+    toys_bird_doesnt_have = Toy.objects.exclude(id__in=id_list)
     feeding_form = FeedingForm()
-    return render(request, 'birds/detail.html', { 'bird': bird, 'feeding_form': feeding_form })
+    return render(request, 'birds/detail.html', {
+        'bird': bird,
+        'feeding_form': feeding_form,
+        'toys': toys_bird_doesnt_have
+    })
 
 
 def add_feeding(request, bird_id):
@@ -36,7 +44,7 @@ def add_feeding(request, bird_id):
 
 class BirdCreate(CreateView):
     model = Bird
-    fields = '__all__'
+    fields = ['name', 'species', 'description', 'age']
 
 
 class BirdUpdate(UpdateView):
@@ -70,3 +78,8 @@ class ToyUpdate(UpdateView):
 class ToyDelete(DeleteView):
     model = Toy
     success_url = '/toys'
+
+
+def assoc_toy(request, bird_id, toy_id):
+    Bird.objects.get(id=bird_id).toys.add(toy_id)
+    return redirect('detail', bird_id=bird_id)

@@ -83,3 +83,8 @@ class ToyDelete(DeleteView):
 def assoc_toy(request, bird_id, toy_id):
     Bird.objects.get(id=bird_id).toys.add(toy_id)
     return redirect('detail', bird_id=bird_id)
+
+
+def unassoc_toy(request, bird_id, toy_id):
+    Bird.objects.get(id=bird_id).toys.remove(toy_id)
+    return redirect('detail', bird_id=bird_id)

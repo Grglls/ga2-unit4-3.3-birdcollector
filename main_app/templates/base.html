@@ -20,10 +20,20 @@
         </ul>
         <ul class="right">
           <li><a href="{% url 'about' %}">About</a></li>
-          <li><a href="{% url 'toys_create' %}">Add a Toy</a></li>
-          <li><a href="{% url 'toys_index' %}">All Toys</a></li>
-          <li><a href="{% url 'birds_create' %}">Add a Bird</a></li>
-          <li><a href="{% url 'index' %}">All Birds</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'toys_create' %}">Add a Toy</a></li>
+            <li><a href="{% url 'toys_index' %}">All Toys</a></li>
+            <li><a href="{% url 'birds_create' %}">Add a Bird</a></li>
+            <li><a href="{% url 'index' %}">All Birds</a></li>
+            <li>
+              <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" id="logout-btn">Log Out</button>
+              </form>
+            </li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Log In</a></li>
+          {% endif %}
         </ul>
       </div>
     </nav>

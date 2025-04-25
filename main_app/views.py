@@ -20,7 +20,7 @@ def about(request):
 
 
 def birds_index(request):
-    birds = Bird.objects.all()
+    birds = Bird.objects.filter(user=request.user)
     return render(request, 'birds/index.html', { 'birds': birds })
 
 

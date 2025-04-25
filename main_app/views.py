@@ -4,6 +4,8 @@ import boto3
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 
 from .models import Bird, Toy, Photo
 from .forms import FeedingForm
@@ -121,3 +123,23 @@ def assoc_toy(request, bird_id, toy_id):
 def unassoc_toy(request, bird_id, toy_id):
     Bird.objects.get(id=bird_id).toys.remove(toy_id)
     return redirect('detail', bird_id=bird_id)
+
+
+def signup(request):
+    error_message = ''
+    if request.method == 'POST':
+        # Create a UserCreationForm instance using the data from the request:
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # Save the form to the database:
+            user = form.save()
+            # Log the user in:
+            login(request, user)
+            return redirect('index')
+        else:
+            # If the form is not valid, set the error message:
+            error_message = 'Invalid sign up - try again'
+    # If the request method is GET, or the sign up fails, render signup.html with an empty form:
+    form = UserCreationForm()
+    context = { 'form': form, 'error': error_message }
+    return render(request, 'registration/signup.html', context)

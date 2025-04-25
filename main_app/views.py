@@ -6,6 +6,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Bird, Toy, Photo
 from .forms import FeedingForm
@@ -19,11 +21,13 @@ def about(request):
     return render(request, 'about.html')
 
 
+@login_required
 def birds_index(request):
     birds = Bird.objects.filter(user=request.user)
     return render(request, 'birds/index.html', { 'birds': birds })
 
 
+@login_required
 def birds_detail(request, bird_id):
     bird = Bird.objects.get(id=bird_id)
     # Get the id's of the toys that are already associated with the bird:
@@ -38,6 +42,7 @@ def birds_detail(request, bird_id):
     })
 
 
+@login_required
 def add_feeding(request, bird_id):
     form = FeedingForm(request.POST)
     if form.is_valid():
@@ -47,6 +52,7 @@ def add_feeding(request, bird_id):
     return redirect('detail', bird_id=bird_id)
 
 
+@login_required
 def add_photo(request, bird_id):
     # 'photo-file' will be the name of the input field in the form,
     #   return None if it doesn't exist:
@@ -70,7 +76,7 @@ def add_photo(request, bird_id):
     return redirect('detail', bird_id=bird_id)
 
 
-class BirdCreate(CreateView):
+class BirdCreate(LoginRequiredMixin, CreateView):
     model = Bird
     fields = ['name', 'species', 'description', 'age']
 
@@ -82,44 +88,46 @@ class BirdCreate(CreateView):
         return super().form_valid(form)
 
 
-class BirdUpdate(UpdateView):
+class BirdUpdate(LoginRequiredMixin, UpdateView):
     model = Bird
     fields = ['species', 'description', 'age']
 
 
-class BirdDelete(DeleteView):
+class BirdDelete(LoginRequiredMixin, DeleteView):
     model = Bird
     success_url = '/birds'
 
 
-class ToyIndex(ListView):
+class ToyIndex(LoginRequiredMixin, ListView):
     model = Toy
 
 
-class ToyDetail(DetailView):
+class ToyDetail(LoginRequiredMixin, DetailView):
     model = Toy
 
 
-class ToyCreate(CreateView):
+class ToyCreate(LoginRequiredMixin, CreateView):
     model = Toy
     fields = '__all__'
 
 
-class ToyUpdate(UpdateView):
+class ToyUpdate(LoginRequiredMixin, UpdateView):
     model = Toy
     fields = ['name', 'color']
 
 
-class ToyDelete(DeleteView):
+class ToyDelete(LoginRequiredMixin, DeleteView):
     model = Toy
     success_url = '/toys'
 
 
+@login_required
 def assoc_toy(request, bird_id, toy_id):
     Bird.objects.get(id=bird_id).toys.add(toy_id)
     return redirect('detail', bird_id=bird_id)
 
 
+@login_required
 def unassoc_toy(request, bird_id, toy_id):
     Bird.objects.get(id=bird_id).toys.remove(toy_id)
     return redirect('detail', bird_id=bird_id)

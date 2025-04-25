@@ -72,6 +72,13 @@ class BirdCreate(CreateView):
     model = Bird
     fields = ['name', 'species', 'description', 'age']
 
+    # Override the inherited method called when a valid form is submitted:
+    def form_valid(self, form):
+        # Assign the logged in user (self.request.user) to the bird (form.instance):
+        form.instance.user = self.request.user
+        # Pass control back to the superclass CreateView's form_valid() method to do its job:
+        return super().form_valid(form)
+
 
 class BirdUpdate(UpdateView):
     model = Bird

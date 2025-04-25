@@ -122,7 +122,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Specify the default redirect URL after successful login:
+# Specify the default redirect URL after successful login or logout:
 LOGIN_REDIRECT_URL = '/birds/'
 LOGOUT_REDIRECT_URL = '/'
 
